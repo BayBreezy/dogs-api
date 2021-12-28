@@ -1,61 +1,73 @@
 //Bring in Router from express
 import { Router } from "express";
+import DogModel from "../models/Dog.js";
 //Create instance of app router
 const router = Router();
 
-let dogs = [];
-
 //Endpoint used to get all dogs
 router.get("/", async (req, res, next) => {
-	res.status(200).json([...dogs]);
+	try {
+		const dogs = await DogModel.find();
+		return res.status(200).json(dogs);
+	} catch (error) {
+		next(error);
+	}
 });
 
 //Endpoint used to get a single dogs
 router.get("/:id", async (req, res, next) => {
-	const { id } = req.params;
-
-	//Check if id is present
-	if (!id) return req.status(404);
-
-	const dog = dogs.find((d) => d.id == id);
-
-	//Checkif the record exist
-	if (!dog) return res.status(404).json({ error: "Dog not found" });
-
-	//Return the dog record
-	res.status(200).json(dog);
+	try {
+		const { id } = req.params;
+		//Check if id is present
+		if (!id) return req.status(404);
+		const dog = await DogModel.findById(id);
+		//Checkif the record exist
+		if (!dog) return res.status(404).json({ error: "Dog not found" });
+		//Return the dog record
+		return res.status(200).json(dog);
+	} catch (error) {
+		next(error);
+	}
 });
 
 //Endpoint used to create a dog record
 router.post("/", async (req, res, next) => {
-	let d = {
-		...req.body,
-		id: dogs.length > 0 ? dogs[dogs.length - 1].id + 1 : 1,
-	};
-	dogs.push(d);
+	try {
+		if (!req.body.name)
+			return res.status(400).json({ error: "Dog name is required" });
 
-	res.status(201).json(d);
+		const newDog = DogModel(req.body);
+		await newDog.save();
+
+		return res.status(201).json(newDog);
+	} catch (error) {
+		next(error);
+	}
 });
 
 //Endpoint used to update a dog record
 router.put("/:id", async (req, res, next) => {
-	const { id } = req.params;
-	//Check if id is present
-	if (!id) return req.status(404);
-	const dog = dogs.find((d) => d.id == id);
-	//Checkif the record exist
-	if (!dog) return res.status(404).json({ error: "Dog not found" });
-	//Find the position of the dog in the array
-	let dogIndex = dogs.findIndex((d) => d.id === dog.id);
-	//replace the record with the new data passed in
-	dogs.splice(dogIndex, 1, { ...req.body, id });
-	res.status(200).json({ message: "Dog updated." });
+	try {
+		const { id } = req.params;
+		//Check if id is present
+		if (!id) return req.status(404);
+		const updatedDog = await DogModel.findByIdAndUpdate(id, req.body, {
+			new: true,
+		});
+		return res.status(200).json(updatedDog);
+	} catch (error) {
+		next(error);
+	}
 });
 
 //Endpoint used to delete a dog record
 router.delete("/:id", async (req, res, next) => {
-	dogs = dogs.filter((d) => d.id != req.params.id);
-	res.status(200).json({ message: "Dog deleted." });
+	try {
+		await DogModel.findByIdAndDelete(req.params.id);
+		return res.status(200).json({ message: "Dog deleted." });
+	} catch (error) {
+		next(error);
+	}
 });
 
 export default router;

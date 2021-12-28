@@ -11,22 +11,22 @@ POST {{url}} HTTP/1.1
 Content-Type: application/json
 
 {
-    "name":"Charlie",
+    "name":"Rex",
     "likes":0,
     "age": 6,
     "image":"https://images.unsplash.com/photo-1422565096762-bdb997a56a84?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
 }
 
 ###
-PUT {{url}}/1 HTTP/1.1
+PUT {{url}}/61cb8b70060d08a5688d744c HTTP/1.1
 Content-Type: application/json
 
    {
-    "name":"Rex",
+    "name":"Rover",
     "likes":0,
     "age": 6,
     "image":"https://images.unsplash.com/photo-1422565096762-bdb997a56a84?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
 } 
 
 ###
-DELETE {{url}}/1 HTTP/1.1
+DELETE {{url}}/61cb8b70060d08a5688d744c HTTP/1.1
